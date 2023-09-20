@@ -14,6 +14,9 @@ pytest = "^7.4.2"
 mypy = "^1.5.1"
 ruff = "^0.0.289"
 deptry = "^0.12.0"
+pytest-asyncio = "^0.21.1"
+pytest-env = "^1.0.1"
+faker = "^19.6.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -33,7 +36,17 @@ target-version = "py311"
 line-length = 120
 select = ["ALL"]
 ignore = [
+    "D100", # Missing docstring in public module
+    "D107", # Missing docstring in `__init__`
     "D104", # pydocstyle - missing docstring in public package
+    "S101", # Use of `assert` detected
+    "ANN101", # Missing type annotation for `self` in method
+    "INP001", # File `alembic/env.py` is part of an implicit namespace package. Add an `__init__.py`.
+    "S605", # Starting a process with a shell: seems safe, but may be changed in the future; consider rewriting without `shell`
+    "S607", # Starting a process with a partial executable path
+    "RUF002", # Docstring contains ambiguous
+
+
 ]
 src = ["src", "tests"]
 
