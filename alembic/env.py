@@ -1,13 +1,11 @@
 import asyncio
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, Connection
-from sqlalchemy import pool
-
 from alembic import context
+from sqlalchemy import Connection, engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
-
-from src.config import DatabaseSettings
+from src.config import db_url
+from tests.base.test_crud_base import DBTestModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -20,15 +18,12 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = DatabaseSettings.metadata
+target_metadata = DBTestModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-config.set_main_option("sqlalchemy.url", DatabaseSettings.db_url)
+config.set_main_option("sqlalchemy.url", db_url)
 
 
 def run_migrations_offline() -> None:
@@ -55,7 +50,7 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def do_run_migrations(connection: Connection) -> None:
+def _do_run_migrations(connection: Connection) -> None:
     context.configure(connection=connection, target_metadata=target_metadata)
 
     with context.begin_transaction():
@@ -69,17 +64,16 @@ async def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-
     connectable = AsyncEngine(
         engine_from_config(
             config.get_section(config.config_ini_section, {}),
             prefix="sqlalchemy.",
             poolclass=pool.NullPool,
-        )
+        ),
     )
 
     async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
+        await connection.run_sync(_do_run_migrations)
 
 
 if context.is_offline_mode():
