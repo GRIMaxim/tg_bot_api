@@ -10,14 +10,14 @@ def _run_migrations() -> Iterator[None]:
     """Запуск миграций для тестовой базы данных и дальнейшее их удаление."""
     from pathlib import Path
 
-    from alembic.config import Config
     from alembic import command
+    from alembic.config import Config
 
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
 
     revision = command.revision(
-        alembic_cfg, message="test_table_init", autogenerate=True
+        alembic_cfg, message="test_table_init", autogenerate=True,
     )
     command.upgrade(alembic_cfg, "head")
     yield

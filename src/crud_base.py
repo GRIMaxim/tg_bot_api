@@ -62,7 +62,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return got_row[0] if got_row is not None else None
 
     async def get_all(
-        self, *, offset: int | None = 0, limit: int | None = 100
+        self, *, offset: int | None = 0, limit: int | None = 100,
     ) -> list[ModelType]:
         """Получение списка строк бд в соответствии с заданными параметрами.
 
