@@ -23,7 +23,7 @@ async_session_maker: async_sessionmaker[AsyncSession] = async_sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False,
 )
-my_metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)  # type: ignore[arg-type]
+my_metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)
 
 
 class Base(AsyncAttrs, DeclarativeBase):
