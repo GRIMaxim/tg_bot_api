@@ -43,6 +43,7 @@ ignore = [
     "ANN101", # flake8-annotations - missing type annotation for `self` in method
     "INP001", # flake8-no-pep420 - file `alembic/env.py` is part of an implicit namespace package. Add an `__init__.py`.
     "F401", # unused import
+    "RUF002", # Docstring contains ambiguous
 ]
 src = ["src", "tests", "alembic"]
 
