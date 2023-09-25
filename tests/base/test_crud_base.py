@@ -22,7 +22,7 @@ class DBTestModel(Base):
     some_default_int: Mapped[int] = mapped_column(default=11)
     some_date: Mapped[datetime] = mapped_column(nullable=True)
     some_default_date: Mapped[datetime] = mapped_column(
-        __type_pos=TIMESTAMP(timezone=True), default=datetime.now(tz=UTC)
+        __type_pos=TIMESTAMP(timezone=True), default=datetime.now(tz=UTC),
     )
 
 
@@ -118,7 +118,7 @@ class TestCRUDBase:
             assert data_out[ind_data].some_default_date
 
         data = await test_db.get_all(
-            offset=self.items_limit + 100, limit=self.items_limit + 120
+            offset=self.items_limit + 100, limit=self.items_limit + 120,
         )
         assert not data
 

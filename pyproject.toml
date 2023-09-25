@@ -36,19 +36,16 @@ target-version = "py311"
 line-length = 120
 select = ["ALL"]
 ignore = [
-    "D100", # Missing docstring in public module
-    "D107", # Missing docstring in `__init__`
+    "D100", # pydocstyle - missing docstring in public module
+    "D107", # pydocstyle - missing docstring in `__init__`
     "D104", # pydocstyle - missing docstring in public package
-    "S101", # Use of `assert` detected
-    "ANN101", # Missing type annotation for `self` in method
-    "INP001", # File `alembic/env.py` is part of an implicit namespace package. Add an `__init__.py`.
-    "S605", # Starting a process with a shell: seems safe, but may be changed in the future; consider rewriting without `shell`
-    "S607", # Starting a process with a partial executable path
+    "S101", # flake8-bandit - use of `assert` detected
+    "ANN101", # flake8-annotations - missing type annotation for `self` in method
+    "INP001", # flake8-no-pep420 - file `alembic/env.py` is part of an implicit namespace package. Add an `__init__.py`.
+    "F401", # unused import
     "RUF002", # Docstring contains ambiguous
-
-
 ]
-src = ["src", "tests"]
+src = ["src", "tests", "alembic"]
 
 [build-system]
 requires = ["poetry-core"]
