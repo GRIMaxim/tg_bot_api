@@ -6,13 +6,13 @@ from src.crud_base import CRUDBase
 from src.utils import async_execute
 
 from .database import UserData
-from .schemas import CreateUser, UpdateUser
+from .schemas import UserCreate, UserUpdate
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-class CRUDUserData(CRUDBase[UserData, CreateUser, UpdateUser]):
+class CRUDUserData(CRUDBase[UserData, UserCreate, UserUpdate]):
     """Определение и расширение класса CRUDBase для схемы данных UserData."""
 
     async def get_by_user_id(self, user_id: int) -> UserData | None:

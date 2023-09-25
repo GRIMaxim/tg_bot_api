@@ -3,7 +3,7 @@ from typing import ClassVar
 import pytest
 from faker import Faker
 from src.user_data.crud import user_data_db
-from src.user_data.schemas import CreateUser
+from src.user_data.schemas import UserCreate
 
 fk = Faker()
 
@@ -11,7 +11,7 @@ fk = Faker()
 class TestCRUDUser:
     """Класс с собранием тестов, относящимся к CRUDUserData."""
 
-    test_user: ClassVar[CreateUser] = CreateUser(user_id=1234, username="test")
+    test_user: ClassVar[UserCreate] = UserCreate(user_id=1234, username="test")
 
     @pytest.mark.asyncio()
     async def test_get_user_by_id(self) -> None:
