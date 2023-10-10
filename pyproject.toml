@@ -7,30 +7,27 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+sqlalchemy = "^2.0.20"
+pydantic = "^2.3.0"
+fastapi = "^0.103.1"
+python-dotenv = "^1.0.0"
 
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.4.2"
+[tool.poetry.group.code.dependencies]
 mypy = "^1.5.1"
 ruff = "^0.0.289"
 deptry = "^0.12.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
 pytest-asyncio = "^0.21.1"
-pytest-env = "^1.0.1"
 faker = "^19.6.1"
 httpx = "^0.25.0"
 
 
-[tool.poetry.group.dev.dependencies]
-sqlalchemy = "^2.0.20"
-pydantic = "^2.3.0"
-fastapi = "^0.103.1"
-uvicorn = "^0.23.2"
-asyncpg = "^0.28.0"
-pydantic-settings = "^2.0.3"
-
-
 [tool.poetry.group.deploy.dependencies]
 alembic = "^1.12.0"
+uvicorn = "^0.23.2"
+asyncpg = "^0.28.0"
 
 [tool.ruff]
 target-version = "py311"
@@ -43,8 +40,9 @@ ignore = [
     "S101", # flake8-bandit - use of `assert` detected
     "ANN101", # flake8-annotations - missing type annotation for `self` in method
     "INP001", # flake8-no-pep420 - file `alembic/env.py` is part of an implicit namespace package. Add an `__init__.py`.
-    "F401", # unused import
-    "RUF002", # Docstring contains ambiguous
+    "F401", # pyflakes - unused import
+    "RUF002", # ruff-specific rules - ambiguousu unicode character string
+    "I001", # isort - unsorted imports
 ]
 src = ["src", "tests", "alembic"]
 
@@ -52,6 +50,8 @@ src = ["src", "tests", "alembic"]
 [tool.mypy]
 strict = true
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
 [build-system]
 requires = ["poetry-core"]
