@@ -1,8 +1,11 @@
-import asyncio
-from asyncio import AbstractEventLoop
-from collections.abc import Iterator
+from asyncio import AbstractEventLoop, get_event_loop_policy
+from collections.abc import AsyncGenerator, Iterator
 
 import pytest
+import pytest_asyncio
+from httpx import AsyncClient
+
+from src.main import main_app
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -17,7 +20,9 @@ def _run_migrations() -> Iterator[None]:
     command.upgrade(alembic_cfg, "head")
 
     revision = command.revision(
-        alembic_cfg, message="test_table_init", autogenerate=True,
+        alembic_cfg,
+        message="test_table_init",
+        autogenerate=True,
     )
     command.upgrade(alembic_cfg, "head")
     yield
@@ -35,6 +40,13 @@ def _run_migrations() -> Iterator[None]:
 @pytest.fixture(autouse=True, scope="session")
 def event_loop() -> Iterator[AbstractEventLoop]:
     """Получение цикла событий."""
-    loop = asyncio.get_event_loop_policy().new_event_loop()
+    loop = get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
+
+@pytest_asyncio.fixture()
+async def client() -> AsyncGenerator[AsyncClient, None]:
+    """Получение тестового клиента."""
+    async with AsyncClient(app=main_app, base_url="http://127.0.0.1:8091") as client:
+        yield client

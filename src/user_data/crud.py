@@ -1,8 +1,9 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import select
+from pydantic import BaseModel
+from sqlalchemy import select, update
 
-from src.crud_base import CRUDBase
+from src.crud import CRUDBase
 from src.utils import async_execute
 
 from .database import UserData
@@ -22,9 +23,9 @@ class CRUDUserData(CRUDBase[UserData, UserCreate, UserUpdate]):
         """
         query = select(self.model).where(self.model.user_id == user_id)
         result = await async_execute(query)
-        user: Sequence[UserData] | None = result.one_or_none()
+        user: UserData | None = result.scalar_one_or_none()
 
-        return user[0] if user is not None else None
+        return user
 
     async def get_by_username(self, username: str) -> UserData | None:
         """Получение пользователя по username.
@@ -33,9 +34,31 @@ class CRUDUserData(CRUDBase[UserData, UserCreate, UserUpdate]):
         """
         query = select(self.model).where(self.model.username == username)
         result = await async_execute(query)
-        user: Sequence[UserData] | None = result.one_or_none()
+        user: UserData | None = result.scalar_one_or_none()
 
-        return user[0] if user is not None else None
+        return user
 
+    async def update(
+        self,
+        data_update: UserUpdate | dict[str, Any],
+    ) -> None:
+        """Обновляет поля пользователя бд по заданному user_id или username.
 
-user_data_db = CRUDUserData(UserData)
+        *data_update* - модель UserUpdate или Mapping, с полями UserData
+        """
+        if isinstance(data_update, BaseModel):
+            data_update = data_update.model_dump()
+
+        user_id, username = None, None
+        if "user_id" in data_update:
+            user_id = data_update.pop("user_id")
+        if "username" in data_update:
+            username = data_update.pop("username")
+
+        query = (
+            update(self.model)
+            .where((self.model.user_id == user_id) | (self.model.username == username))
+            .values(**data_update)
+        )
+
+        await async_execute(query)

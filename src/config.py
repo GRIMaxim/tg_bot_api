@@ -9,15 +9,20 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from dotenv import load_dotenv
 
 from .constants import DB_NAMING_CONVENTION
+
+load_dotenv()
 
 db_url: str = (
     f"{os.getenv('PG_DRIVERNAME')}://"
     f"{os.getenv('PG_USER')}:{os.getenv('PG_PASS')}@"
     f"{os.getenv('PG_HOST')}:{os.getenv('PG_PORT')}/{os.getenv('PG_DATABASE')}"
 )
-engine: AsyncEngine = create_async_engine(db_url, echo=True, future=True)
+engine: AsyncEngine = create_async_engine(
+    db_url, echo=os.getenv("F_TEST") == "True", future=True,
+)
 async_session_maker: async_sessionmaker[AsyncSession] = async_sessionmaker(
     engine,
     class_=AsyncSession,
