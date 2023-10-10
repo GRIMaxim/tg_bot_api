@@ -1,10 +1,13 @@
-from sqlalchemy.sql.schema import _NamingSchemaParameter
 from sqlalchemy.util import immutabledict
+from pydantic import BaseModel
 
-DB_NAMING_CONVENTION: _NamingSchemaParameter = immutabledict({  # type: ignore[arg-type]
-    "ix": "%(column_0_label)s_idx",
-    "uq": "%(table_name)s_%(column_0_name)s_key",
-    "ck": "%(table_name)s_%(constraint_name)s_check",
-    "fk": "%(table_name)s_%(column_0_name)s_fkey",
-    "pk": "%(table_name)s_%(column_0_name)s_pkey",
-})
+
+DB_NAMING_CONVENTION = immutabledict(
+    {
+        "ix": "%(column_0_label)s_idx",
+        "uq": "%(table_name)s_%(column_0_name)s_key",
+        "ck": "%(table_name)s_%(constraint_name)s_check",
+        "fk": "%(table_name)s_%(column_0_name)s_fkey",
+        "pk": "%(table_name)s_%(column_0_name)s_pkey",
+    },
+)
