@@ -1,12 +1,14 @@
 import asyncio
 from logging.config import fileConfig
+import os
 
 from alembic import context
 from sqlalchemy import Connection, engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from src.config import Base, db_url
 from src.user_data.database import UserData
-from tests.base.test_crud_base import DBTestModel
+if os.getenv("F_TEST") == "True":
+    from tests.base.test_crud_base import DBTestModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -43,7 +45,7 @@ def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
-        target_metadata=target_metadata,  # type: ignore[arg-type]
+        target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
@@ -53,7 +55,7 @@ def run_migrations_offline() -> None:
 
 
 def _do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)  # type: ignore[arg-type]
+    context.configure(connection=connection, target_metadata=target_metadata)
 
     with context.begin_transaction():
         context.run_migrations()
