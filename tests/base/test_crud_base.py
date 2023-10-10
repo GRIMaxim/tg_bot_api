@@ -1,13 +1,12 @@
 from datetime import UTC, datetime
 from typing import Any, ClassVar
 
-import pytest
 from faker import Faker
 from pydantic import BaseModel
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column
 from src.config import Base
-from src.crud_base import CRUDBase
+from src.crud import CRUDBase
 
 fk = Faker()
 
@@ -22,7 +21,8 @@ class DBTestModel(Base):
     some_default_int: Mapped[int] = mapped_column(default=11)
     some_date: Mapped[datetime] = mapped_column(nullable=True)
     some_default_date: Mapped[datetime] = mapped_column(
-        __type_pos=TIMESTAMP(timezone=True), default=datetime.now(tz=UTC),
+        __type_pos=TIMESTAMP(timezone=True),
+        default=datetime.now(tz=UTC),
     )
 
 
@@ -67,26 +67,15 @@ class TestCRUDBase:
         for _ in range(items_limit)
     ]
 
-    @pytest.mark.asyncio()
-    async def test_create(self) -> None:
-        """Тестирование функции CRUDBase.create()."""
+    async def test_create_get(self) -> None:
+        """Тестирование функции CRUDBase.create() и CRUDBase.get()."""
         for ind_data in range(self.items_limit):
             if ind_data % 2 != 0:
-                result_data = await test_db.create(self.input_data[ind_data])
+                await test_db.create(self.input_data[ind_data])
             else:
                 data_in = CreateTestModel(**self.input_data[ind_data])
-                result_data = await test_db.create(data_in)
+                await test_db.create(data_in)
 
-            assert result_data
-            assert result_data.some_string == self.input_data[ind_data]["some_string"]
-            assert result_data.some_int == self.input_data[ind_data]["some_int"]
-            assert result_data.some_date == self.input_data[ind_data]["some_date"]
-            assert result_data.some_default_int
-            assert result_data.some_default_date
-
-    @pytest.mark.asyncio()
-    async def test_get(self) -> None:
-        """Тестирование функции CRUDBase.get()."""
         for ind_data in range(1, self.items_limit + 1):
             data_out = await test_db.get(pk=ind_data)
             assert data_out
@@ -99,7 +88,6 @@ class TestCRUDBase:
         data = await test_db.get(pk=self.items_limit + 1000000)
         assert data is None
 
-    @pytest.mark.asyncio()
     async def test_get_all(self) -> None:
         """Тестирование функции CRUDBase.get_all()."""
         data_out = await test_db.get_all(limit=self.items_limit)
@@ -118,11 +106,11 @@ class TestCRUDBase:
             assert data_out[ind_data].some_default_date
 
         data = await test_db.get_all(
-            offset=self.items_limit + 100, limit=self.items_limit + 120,
+            offset=self.items_limit + 100,
+            limit=self.items_limit + 120,
         )
         assert not data
 
-    @pytest.mark.asyncio()
     async def test_update(self) -> None:
         """Тестирование функции CRUDBase.update()."""
         for i in range(2):
@@ -133,16 +121,9 @@ class TestCRUDBase:
                 "some_date": fk.date_time(),
             }
 
-            updated_data = await test_db.update(
+            await test_db.update(
                 update_data if i == 0 else UpdateTestModel(**update_data),
             )
-
-            assert updated_data
-            assert updated_data.some_string == update_data["some_string"]
-            assert updated_data.some_int == update_data["some_int"]
-            assert updated_data.some_date == update_data["some_date"]
-            assert updated_data.some_default_int
-            assert updated_data.some_default_date
 
             get_updated_data = await test_db.get(pk=update_data["pk"])
 
@@ -153,16 +134,6 @@ class TestCRUDBase:
             assert get_updated_data.some_default_int
             assert get_updated_data.some_default_date
 
-        update_data = {
-            "pk": self.items_limit + 100,
-            "some_string": fk.name(),
-            "some_int": fk.random_int(),
-            "some_date": fk.date_time(),
-        }
-        updated_data = await test_db.update(update_data)
-        assert updated_data is None
-
-    @pytest.mark.asyncio()
     async def test_delete(self) -> None:
         """Тестирование функции CRUDBase.delete()."""
         delete_pk = 1
@@ -170,17 +141,7 @@ class TestCRUDBase:
         data = await test_db.get(pk=delete_pk)
         assert data is not None
 
-        deleted_data = await test_db.delete(pk=delete_pk)
-
-        assert deleted_data is not None
-        assert deleted_data.some_string == data.some_string
-        assert deleted_data.some_int == data.some_int
-        assert deleted_data.some_date == data.some_date
-        assert deleted_data.some_default_int
-        assert deleted_data.some_default_date
+        await test_db.delete(pk=delete_pk)
 
         deleted_data = await test_db.get(pk=delete_pk)
         assert deleted_data is None
-
-        unset_data = await test_db.get(pk=self.items_limit + 100)
-        assert unset_data is None
