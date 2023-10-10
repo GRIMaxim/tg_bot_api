@@ -35,20 +35,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def create(
         self,
         data_in: CreateSchemaType | Mapping[str, Any],
-    ) -> ModelType | None:
+    ) -> None:
         """Создание новой строки бд.
 
         *data_in* - модель CreateSchemaType или Mapping, с полями в соответствии с ModelType
-
-        Возвращает созданный ModelType
         """
         if isinstance(data_in, BaseModel):
             data_in = data_in.model_dump()
 
-        query = insert(self.model).values(**data_in).returning(self.model)
-        result = await async_execute(query)
-        created_row: Sequence[ModelType] | None = result.one_or_none()
-        return created_row[0] if created_row is not None else None
+        query = insert(self.model).values(**data_in)
+        await async_execute(query)
 
     async def get(self, pk: int) -> ModelType | None:
         """Получение строки бд по первичному ключу.
@@ -57,13 +53,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         query = select(self.model).where(self.model.pk == pk)
         result = await async_execute(query)
-        got_row: Sequence[ModelType] | None = result.one_or_none()
+        got_row: ModelType | None = result.scalar_one_or_none()
 
-        return got_row[0] if got_row is not None else None
+        return got_row
 
     async def get_all(
-        self, *, offset: int | None = 0, limit: int | None = 100,
-    ) -> list[ModelType]:
+        self,
+        *,
+        offset: int | None = 0,
+        limit: int | None = 100,
+    ) -> Sequence[ModelType]:
         """Получение списка строк бд в соответствии с заданными параметрами.
 
         *offset* - параметр OFFSET как в SQL. Игнорируется, если None
@@ -72,17 +71,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         query = select(self.model).offset(offset).limit(limit)
         result = await async_execute(query)
-        return [row[0] for row in result.all()]
+        items: Sequence[ModelType] = result.scalars().all()
+        return items
 
     async def update(
         self,
-        data_update: UpdateSchemaType | Mapping[str, Any],
-    ) -> ModelType | None:
+        data_update: UpdateSchemaType | dict[str, Any],
+    ) -> None:
         """Обновляет поля заданной строки бд.
 
         *data_update* - модель UpdateSchemaType или Mapping, с полями в соответствии с ModelType
-
-        Возвращает обновленную ModelType, если строка была найдена, в противном случае None.
         """
         if isinstance(data_update, BaseModel):
             data_update = data_update.model_dump()
@@ -91,20 +89,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             update(self.model)
             .where(self.model.pk == data_update["pk"])
             .values(**data_update)
-            .returning(self.model)
         )
 
-        result = await async_execute(query)
-        updated_row: Sequence[ModelType] | None = result.one_or_none()
+        await async_execute(query)
 
-        return updated_row[0] if updated_row is not None else None
-
-    async def delete(self, pk: int) -> ModelType | None:
-        """Удаление строки бд по первичному ключу.
-
-        Возвращает удаленный ModelType, если строка существует, в противном случае None.
-        """
-        query = delete(self.model).where(self.model.pk == pk).returning(self.model)
-        result = await async_execute(query)
-        deleted_row: Sequence[ModelType] | None = result.one_or_none()
-        return deleted_row[0] if deleted_row is not None else None
+    async def delete(self, pk: int) -> None:
+        """Удаление строки бд по первичному ключу."""
+        query = delete(self.model).where(self.model.pk == pk)
+        await async_execute(query)
