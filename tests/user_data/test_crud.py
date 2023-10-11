@@ -1,17 +1,18 @@
 from typing import Any, ClassVar
 
+from faker import Faker
+
 from src.user_data.crud import CRUDUserData
-from src.user_data.database import UserData
 from src.user_data.schemas import UserCreate
 
 
-user_data_db = CRUDUserData(UserData)
+fk = Faker()
 
 
 class TestCRUDUser:
     """Класс с собранием тестов, относящимся к CRUDUserData."""
 
-    test_user: ClassVar[UserCreate] = UserCreate(user_id=1234, username="test")
+    test_user: ClassVar[UserCreate] = UserCreate(user_id=fk.random_int(), username=fk.name())
     update_without_username: ClassVar[dict[str, Any]] = {
         "user_id": test_user.user_id,
         "is_subs_active": True,
@@ -24,7 +25,7 @@ class TestCRUDUser:
         "online_search_active": False,
     }
 
-    async def test_get_user_by_id(self) -> None:
+    async def test_get_user_by_id(self, user_data_db: CRUDUserData) -> None:
         """Тестирование CRUDUserData.get_by_user_id."""
         await user_data_db.create(self.test_user)
 
@@ -42,7 +43,7 @@ class TestCRUDUser:
         not_user = await user_data_db.get_by_user_id(created_user.user_id + 10000)
         assert not_user is None
 
-    async def test_get_user_by_username(self) -> None:
+    async def test_get_user_by_username(self, user_data_db: CRUDUserData) -> None:
         """Тестирование CRUDUserData.get_by_username."""
         assert self.test_user.username
         created_user = await user_data_db.get_by_username(self.test_user.username)
@@ -59,7 +60,7 @@ class TestCRUDUser:
         not_user = await user_data_db.get_by_username(self.test_user.username + "abc")
         assert not_user is None
 
-    async def test_update_user(self) -> None:
+    async def test_update_user(self, user_data_db: CRUDUserData) -> None:
         """Тестирование CRUDUserData.update (overload)."""
         await user_data_db.update(self.update_without_username)
 
