@@ -9,6 +9,6 @@ class UserChat(Base):
     
     __tablename__ = "user_chat"
 
-    user_pk: Mapped[int] = mapped_column(ForeignKey("user_data.pk"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_data.user_id"))
     chat_name: Mapped[str] = mapped_column(nullable=True)
         

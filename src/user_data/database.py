@@ -11,7 +11,7 @@ class UserData(Base):
 
     __tablename__ = "user_data"
 
-    user_id: Mapped[int] = mapped_column(__type_pos=BigInteger, nullable=True)
+    user_id: Mapped[int] = mapped_column(__type_pos=BigInteger, nullable=True, unique=True)
     username: Mapped[str] = mapped_column(nullable=True)
     is_subs_active: Mapped[bool] = mapped_column(default=False)
     create_at: Mapped[datetime] = mapped_column(__type_pos=TIMESTAMP(timezone=True), default=datetime.now(tz=UTC))
