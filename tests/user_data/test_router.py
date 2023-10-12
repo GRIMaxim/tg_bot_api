@@ -5,7 +5,7 @@ from faker import Faker
 from fastapi import status
 from httpx import AsyncClient
 
-from src.user_data.constants import ErrorMessages
+from src.user_data.constants import ErrorMessages, RouterPaths
 from src.user_data.database import UserData
 from src.user_data.schemas import UserRead
 
@@ -63,7 +63,8 @@ class TestUserRouter:
         assert isinstance(datetime.fromisoformat(data_in["create_at"]), datetime)
 
         if isinstance(data_in["start_subs_at"], str) and isinstance(
-            data_correct["start_subs_at"], str,
+            data_correct["start_subs_at"],
+            str,
         ):
             data_in["start_subs_at"] = datetime.fromisoformat(data_in["start_subs_at"])
             data_correct["start_subs_at"] = datetime.fromisoformat(
@@ -72,7 +73,8 @@ class TestUserRouter:
         assert data_in["start_subs_at"] == data_correct["start_subs_at"]
 
         if isinstance(data_in["end_subs_at"], str) and isinstance(
-            data_correct["end_subs_at"], str,
+            data_correct["end_subs_at"],
+            str,
         ):
             data_in["end_subs_at"] = datetime.fromisoformat(data_in["end_subs_at"])
             data_correct["end_subs_at"] = datetime.fromisoformat(
@@ -86,7 +88,7 @@ class TestUserRouter:
     async def test_create_get_correct_user(self, client: AsyncClient) -> None:
         """Тестирование обработчика создания пользователя со всеми полями и его дальнейшее получение."""
         response: Response = await client.post(
-            "/user/",
+            RouterPaths.CREATE_USER,
             json={
                 "user_id": self.default_user["user_id"],
                 "username": self.default_user["username"],
@@ -95,7 +97,7 @@ class TestUserRouter:
         assert response.status_code == status.HTTP_202_ACCEPTED
 
         response = await client.get(
-            f"/user/?user_id={self.default_user['user_id']}",
+            RouterPaths.GET_USER + f"?user_id={self.default_user['user_id']}",
         )
         assert response.status_code == status.HTTP_200_OK
         response_data = response.json()
@@ -105,7 +107,7 @@ class TestUserRouter:
     async def test_create_user_without_username(self, client: AsyncClient) -> None:
         """Тестирование обработчика создания пользователя только с полем user_id."""
         response: Response = await client.post(
-            "/user/",
+            RouterPaths.CREATE_USER,
             json={
                 "user_id": self.user_without_username["user_id"],
             },
@@ -113,7 +115,7 @@ class TestUserRouter:
         assert response.status_code == status.HTTP_202_ACCEPTED
 
         response = await client.get(
-            f"/user/?user_id={self.user_without_username['user_id']}",
+            RouterPaths.GET_USER + f"?user_id={self.user_without_username['user_id']}",
         )
         assert response.status_code == status.HTTP_200_OK
         response_data = response.json()
@@ -124,7 +126,7 @@ class TestUserRouter:
     async def test_create_user_repeat(self, client: AsyncClient) -> None:
         """Попытка создания существующего пользователя."""
         response: Response = await client.post(
-            "/user/",
+            RouterPaths.CREATE_USER,
             json={
                 "user_id": self.default_user["user_id"],
                 "username": self.default_user["username"],
@@ -136,7 +138,9 @@ class TestUserRouter:
 
     async def test_get_user_by_username(self, client: AsyncClient) -> None:
         """Тестирование получения пользователя по username."""
-        response = await client.get(f"/user/?username={self.default_user['username']}")
+        response = await client.get(
+            RouterPaths.GET_USER + f"?username={self.default_user['username']}"
+        )
         response_data = response.json()
         assert response.status_code == status.HTTP_200_OK
         self.check_fields(response_data, self.default_user)
@@ -144,7 +148,7 @@ class TestUserRouter:
     async def test_get_uncreated_user(self, client: AsyncClient) -> None:
         """Попытка получения несуществующего пользователя."""
         response: Response = await client.get(
-            f"/user/?user_id={fk.random_int()}&username={fk.name()}",
+            RouterPaths.GET_USER + f"?user_id={fk.random_int()}&username={fk.name()}",
         )
         response_data = response.json()
         assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -152,7 +156,7 @@ class TestUserRouter:
 
     async def test_get_all_users(self, client: AsyncClient) -> None:
         """Тестирование получения всех пользователей."""
-        response: Response = await client.get("/user/all")
+        response: Response = await client.get(RouterPaths.GET_ALL_USERS)
         created_users = [self.default_user, self.user_without_username]
         response_data = response.json()
         assert response.status_code == status.HTTP_200_OK
@@ -169,11 +173,13 @@ class TestUserRouter:
             datetime.now(tz=UTC) + timedelta(days=7)
         ).isoformat()
 
-        response: Response = await client.put("/user/", json=self.user_without_username)
+        response: Response = await client.put(
+            RouterPaths.UPDATE_USER, json=self.user_without_username
+        )
         assert response.status_code == status.HTTP_202_ACCEPTED
 
         response = await client.get(
-            f"/user/?user_id={self.user_without_username['user_id']}",
+            RouterPaths.GET_USER + f"?user_id={self.user_without_username['user_id']}",
         )
         assert response.status_code == status.HTTP_200_OK
         response_data = response.json()
@@ -189,14 +195,16 @@ class TestUserRouter:
         self.default_user["is_trial_used"] = True
         self.default_user["online_search_active"] = True
 
-        response: Response = await client.put("/user/", json=self.default_user)
+        response: Response = await client.put(
+            RouterPaths.UPDATE_USER, json=self.default_user
+        )
         response_data = response.json()
         assert response.status_code == status.HTTP_202_ACCEPTED
 
         self.default_user["user_id"] = user_id
 
         response = await client.get(
-            f"/user/?user_id={self.default_user['user_id']}",
+            RouterPaths.GET_USER + f"?user_id={self.default_user['user_id']}",
         )
         assert response.status_code == status.HTTP_200_OK
         response_data = response.json()
@@ -207,9 +215,12 @@ class TestUserRouter:
     async def test_update_uncreated_user(self, client: AsyncClient) -> None:
         """Попытка обновления данных несуществующего пользователя."""
         response: Response = await client.put(
-            "/user/",
+            RouterPaths.UPDATE_USER,
             json={"user_id": fk.random_int(), "is_trial_used": True},
         )
         response_data = response.json()
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response_data["detail"] == ErrorMessages.USER_NOT_FOUND
+        
+    async def test_get_chats_with_user_data(self, client: AsyncClient) -> None:
+        """Получение данных о пользователе и списка его чатов."""

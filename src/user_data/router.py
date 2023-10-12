@@ -5,8 +5,9 @@ from fastapi import APIRouter, status, BackgroundTasks, Depends
 from .crud import CRUDUserData
 from .database import UserData
 from .exceptions import UserIsAlreadyExist, UserNotFound
-from .schemas import UserCreate, UserRead, UserReadAll, UserUpdate
+from .schemas import UserCreate, UserRead, UserReadAll, UserUpdate, UserReadAllData
 from .dependencies import get_user_data_db
+from .constants import RouterPaths
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -15,7 +16,9 @@ if TYPE_CHECKING:
 router = APIRouter()
 
 
-@router.post("/user/", status_code=status.HTTP_202_ACCEPTED, response_model=None)
+@router.post(
+    RouterPaths.CREATE_USER, status_code=status.HTTP_202_ACCEPTED, response_model=None
+)
 async def add_user(
     user_in: UserCreate,
     worker: BackgroundTasks,
@@ -36,7 +39,9 @@ async def add_user(
     worker.add_task(user_data_db.create, user_in)
 
 
-@router.get("/user/", status_code=status.HTTP_200_OK, response_model=UserRead)
+@router.get(
+    RouterPaths.GET_USER, status_code=status.HTTP_200_OK, response_model=UserRead
+)
 async def get_user(
     user_id: int | None = None,
     username: str | None = None,
@@ -62,7 +67,36 @@ async def get_user(
     return user_out
 
 
-@router.get("/user/all", status_code=status.HTTP_200_OK, response_model=UserReadAll)
+@router.get(
+    RouterPaths.GET_ALL_USER_DATA,
+    status_code=status.HTTP_200_OK,
+    response_model=UserReadAllData,
+)
+async def get_all_user_data(
+    user_id: int | None = None,
+    user_data_db: CRUDUserData = Depends(get_user_data_db),
+) -> UserData:
+    """Получение пользовательских данных из всех связанных таблиц.
+
+    **Параметры**
+
+    *user_id* - id пользователя telegram.
+
+    *user_data_db* - экземпляр CRUDUserData для работы с базой данных.
+    """
+    # TODO: Написать тест
+    if user_id:
+        user_out = await user_data_db.get_by_user_id_with_fk(user_id)
+    if not user_out:
+        raise UserNotFound
+    return user_out
+
+
+@router.get(
+    RouterPaths.GET_ALL_USERS,
+    status_code=status.HTTP_200_OK,
+    response_model=UserReadAll,
+)
 async def get_users(
     offset: int = 1,
     limit: int = 100,
@@ -82,7 +116,9 @@ async def get_users(
     return {"users": [UserRead.model_validate(user) for user in users]}
 
 
-@router.put("/user/", status_code=status.HTTP_202_ACCEPTED, response_model=None)
+@router.put(
+    RouterPaths.UPDATE_USER, status_code=status.HTTP_202_ACCEPTED, response_model=None
+)
 async def update_user(
     user_update: UserUpdate,
     worker: BackgroundTasks,

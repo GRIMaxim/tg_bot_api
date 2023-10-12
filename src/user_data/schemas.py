@@ -30,6 +30,12 @@ class UserRead(UserUpdate):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserReadAllData(UserRead):
+    """Pydantic модель для получения всех данных о пользователе из бд."""
+
+    chats: list[str]
+
+
 class UserReadAll(BaseModel):
     """Pydantic модель для получения записей о пользователях из бд."""
 
