@@ -12,7 +12,9 @@ fk = Faker()
 class TestCRUDUser:
     """Класс с собранием тестов, относящимся к CRUDUserData."""
 
-    test_user: ClassVar[UserCreate] = UserCreate(user_id=fk.random_int(), username=fk.name())
+    test_user: ClassVar[UserCreate] = UserCreate(
+        user_id=fk.random_int(), username=fk.name(),
+    )
     update_without_username: ClassVar[dict[str, Any]] = {
         "user_id": test_user.user_id,
         "is_subs_active": True,
