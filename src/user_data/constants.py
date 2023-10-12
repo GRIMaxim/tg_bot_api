@@ -11,8 +11,8 @@ class ErrorMessages(str, Enum):
 class RouterPaths(str, Enum):
     """Перечисление путей для роутера user_data."""
 
-    CREATE_USER = "/user/"
-    GET_USER = "/user/"
-    GET_ALL_USER_DATA = "/user/all"
-    GET_ALL_USERS = "/user/all"
-    UPDATE_USER = "/user/"
+    CREATE_USER = "/user/data/"
+    GET_USER = "/user/data/" # noqa:PIE796
+    GET_ALL_USER_DATA = "/user/data/all_with_fk"
+    GET_ALL_USERS = "/user/data/all"
+    UPDATE_USER = "/user/data/" # noqa:PIE796
