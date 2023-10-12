@@ -139,7 +139,7 @@ class TestUserRouter:
     async def test_get_user_by_username(self, client: AsyncClient) -> None:
         """Тестирование получения пользователя по username."""
         response = await client.get(
-            RouterPaths.GET_USER + f"?username={self.default_user['username']}"
+            RouterPaths.GET_USER + f"?username={self.default_user['username']}",
         )
         response_data = response.json()
         assert response.status_code == status.HTTP_200_OK
@@ -174,7 +174,7 @@ class TestUserRouter:
         ).isoformat()
 
         response: Response = await client.put(
-            RouterPaths.UPDATE_USER, json=self.user_without_username
+            RouterPaths.UPDATE_USER, json=self.user_without_username,
         )
         assert response.status_code == status.HTTP_202_ACCEPTED
 
@@ -196,7 +196,7 @@ class TestUserRouter:
         self.default_user["online_search_active"] = True
 
         response: Response = await client.put(
-            RouterPaths.UPDATE_USER, json=self.default_user
+            RouterPaths.UPDATE_USER, json=self.default_user,
         )
         response_data = response.json()
         assert response.status_code == status.HTTP_202_ACCEPTED
@@ -221,6 +221,6 @@ class TestUserRouter:
         response_data = response.json()
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response_data["detail"] == ErrorMessages.USER_NOT_FOUND
-        
+
     async def test_get_chats_with_user_data(self, client: AsyncClient) -> None:
         """Получение данных о пользователе и списка его чатов."""
