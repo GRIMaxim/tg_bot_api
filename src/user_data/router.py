@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 @router.post(
-    RouterPaths.CREATE_USER, status_code=status.HTTP_202_ACCEPTED, response_model=None
+    RouterPaths.CREATE_USER, status_code=status.HTTP_202_ACCEPTED, response_model=None,
 )
 async def add_user(
     user_in: UserCreate,
@@ -40,7 +40,7 @@ async def add_user(
 
 
 @router.get(
-    RouterPaths.GET_USER, status_code=status.HTTP_200_OK, response_model=UserRead
+    RouterPaths.GET_USER, status_code=status.HTTP_200_OK, response_model=UserRead,
 )
 async def get_user(
     user_id: int | None = None,
@@ -84,7 +84,8 @@ async def get_all_user_data(
 
     *user_data_db* - экземпляр CRUDUserData для работы с базой данных.
     """
-    # TODO: Написать тест
+    # TODO @me: Написать тест
+    user_out: UserData | None = None
     if user_id:
         user_out = await user_data_db.get_by_user_id_with_fk(user_id)
     if not user_out:
@@ -117,7 +118,7 @@ async def get_users(
 
 
 @router.put(
-    RouterPaths.UPDATE_USER, status_code=status.HTTP_202_ACCEPTED, response_model=None
+    RouterPaths.UPDATE_USER, status_code=status.HTTP_202_ACCEPTED, response_model=None,
 )
 async def update_user(
     user_update: UserUpdate,
