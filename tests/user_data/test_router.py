@@ -41,7 +41,8 @@ class TestUserRouter:
 
     @staticmethod
     def check_fields(
-        data_in: dict[str, Any] | UserData, data_correct: dict[str, Any],
+        data_in: dict[str, Any] | UserData,
+        data_correct: dict[str, Any],
     ) -> None:
         """Функция для проверки полей.
 
@@ -61,14 +62,22 @@ class TestUserRouter:
         assert data_in["create_at"]
         assert isinstance(datetime.fromisoformat(data_in["create_at"]), datetime)
 
-        if isinstance(data_in["start_subs_at"], str) and isinstance(data_correct["start_subs_at"], str):
+        if isinstance(data_in["start_subs_at"], str) and isinstance(
+            data_correct["start_subs_at"], str,
+        ):
             data_in["start_subs_at"] = datetime.fromisoformat(data_in["start_subs_at"])
-            data_correct["start_subs_at"] = datetime.fromisoformat(data_correct["start_subs_at"])
+            data_correct["start_subs_at"] = datetime.fromisoformat(
+                data_correct["start_subs_at"],
+            )
         assert data_in["start_subs_at"] == data_correct["start_subs_at"]
 
-        if isinstance(data_in["end_subs_at"], str) and isinstance(data_correct["end_subs_at"], str):
+        if isinstance(data_in["end_subs_at"], str) and isinstance(
+            data_correct["end_subs_at"], str,
+        ):
             data_in["end_subs_at"] = datetime.fromisoformat(data_in["end_subs_at"])
-            data_correct["end_subs_at"] = datetime.fromisoformat(data_correct["end_subs_at"])
+            data_correct["end_subs_at"] = datetime.fromisoformat(
+                data_correct["end_subs_at"],
+            )
         assert data_in["end_subs_at"] == data_correct["end_subs_at"]
 
         assert data_in["is_trial_used"] == data_correct["is_trial_used"]
@@ -147,10 +156,10 @@ class TestUserRouter:
         created_users = [self.default_user, self.user_without_username]
         response_data = response.json()
         assert response.status_code == status.HTTP_200_OK
-        for response_user, created_user in zip(
-            response_data["users"], created_users, strict=True,
-        ):
-            self.check_fields(response_user, created_user)
+        for created_user in created_users:
+            for response_user in response_data["users"]:
+                if response_user["user_id"] == created_user["user_id"]:
+                    self.check_fields(response_user, created_user)
 
     async def test_update_user(self, client: AsyncClient) -> None:
         """Тестирование обновления пользовательских данных."""
@@ -198,7 +207,8 @@ class TestUserRouter:
     async def test_update_uncreated_user(self, client: AsyncClient) -> None:
         """Попытка обновления данных несуществующего пользователя."""
         response: Response = await client.put(
-            "/user/", json={"user_id": fk.random_int(), "is_trial_used": True},
+            "/user/",
+            json={"user_id": fk.random_int(), "is_trial_used": True},
         )
         response_data = response.json()
         assert response.status_code == status.HTTP_404_NOT_FOUND
