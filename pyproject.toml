@@ -43,6 +43,7 @@ ignore = [
     "F401", # pyflakes - unused import
     "RUF002", # ruff-specific rules - ambiguousu unicode character string
     "I001", # isort - unsorted imports
+    "B008", # flake8-bugbear - function call in default argument
 ]
 src = ["src", "tests", "alembic"]
 
