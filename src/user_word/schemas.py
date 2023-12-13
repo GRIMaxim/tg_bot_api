@@ -25,5 +25,9 @@ class WordReadMany(WordCreateMany):
     model_config = ConfigDict(from_attributes=True)
 
 
-class WordDeleteMany(WordCreateMany):
+class WordDeleteMany(BaseModel):
     """Схема запроса на удаление списка слов."""
+
+    is_key: bool
+    words: list[str]
+    user_id: int
