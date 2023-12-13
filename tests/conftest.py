@@ -5,10 +5,12 @@ import pytest
 import pytest_asyncio
 from httpx import AsyncClient
 
-from src.user_data.crud import CRUDUserData
-from src.user_data.database import UserData
 from src.user_chat.crud import CRUDUserChat
-from src.user_chat.database import UserChat
+from src.user_data.crud import CRUDUserData
+from src.user_word.crud import CRUDUserWord
+from src.user_data.dependencies import get_user_data_db
+from src.user_chat.dependencies import get_user_chat_db
+from src.user_word.dependencies import get_user_word_db
 
 from src.main import main_app
 
@@ -53,13 +55,19 @@ def event_loop() -> Iterator[AbstractEventLoop]:
 @pytest.fixture()
 def user_data_db() -> CRUDUserData:
     """Фабрика для получения CRUDUserData."""
-    return CRUDUserData(UserData)
+    return get_user_data_db()
 
 
 @pytest.fixture()
 def user_chat_db() -> CRUDUserChat:
     """Фабрика для получения CRUDUserChat."""
-    return CRUDUserChat(UserChat)
+    return get_user_chat_db()
+
+
+@pytest.fixture()
+def user_word_db() -> CRUDUserWord:
+    """Фабрика для получения CRUDUserChat."""
+    return get_user_word_db()
 
 
 @pytest_asyncio.fixture()
