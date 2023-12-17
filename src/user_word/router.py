@@ -15,15 +15,15 @@ async def add_list_word(
     worker: BackgroundTasks,
     user_word_db: CRUDUserWord = Depends(get_user_word_db),
 ) -> None:
-    """Добавление списка чатов в бд.
+    """Добавление списка слов в бд.
 
     **Параметры**
 
-    *user_list_word* - схема запроса ChatCreate.
+    *user_list_word* - схема запроса WordCreateMany.
 
     *worker* - BackgroundTasks для выполнения задач в фоне.
 
-    *user_chat_db* - экземпляр CRUDUserChat для работы с таблицей user_chat.
+    *user_word_db* - экземпляр CRUDUserWord для работы с таблицей user_word.
     """
     worker.add_task(user_word_db.add_words, user_list_word)
 
@@ -35,51 +35,55 @@ async def get_list_word(
     user_id: int,
     user_word_db: CRUDUserWord = Depends(get_user_word_db),
 ) -> dict[str, Any]:
-    """Получение списка чатов из бд по user_id.
+    """Получение списка слов из бд по user_id.
 
     **Параметры**
 
-    *user_id* - id пользователя телеграмм.
+    *user_id* - id пользователя телеграм.
 
-    *user_chat_db* - экземпляр CRUDUserChat для работы с таблицей user_chat.
+    *user_word_db* - экземпляр CRUDUserWord для работы с таблицей user_word.
     """
     words = await user_word_db.get_words(user_id)
     return {"user_id": user_id, "words": [{"word": data.word, "is_key": data.is_key} for data in words]}
 
 
-# @router.put(RouterPaths.DELETE_CHATS, status_code=status.HTTP_202_ACCEPTED)
-# async def delete_list_chat(
-#     user_delete_list_chat: ChatDelete,
-#     worker: BackgroundTasks,
-#     user_chat_db: CRUDUserChat = Depends(get_user_chat_db),
-# ) -> None:
-#     """Удаление заданного списка чатов из бд.
-#
-#     **Параметры**
-#
-#     *user_delete_list_chat* - схема запроса ChatDelete.
-#
-#     *worker* - BackgroundTasks для выполнения задач в фоне.
-#
-#     *user_chat_db* - экземпляр CRUDUserChat для работы с таблицей user_chat.
-#     """
-#     worker.add_task(user_chat_db.delete_chats, user_delete_list_chat)
-#
-#
-# @router.delete(RouterPaths.DELETE_ALL_CHATS, status_code=status.HTTP_202_ACCEPTED)
-# async def delete_all_chats(
-#     user_id: int,
-#     worker: BackgroundTasks,
-#     user_chat_db: CRUDUserChat = Depends(get_user_chat_db),
-# ) -> None:
-#     """Удаление всех чатов пользователя из бд.
-#
-#     **Параметры**
-#
-#     *user_id* - id пользователя телеграмм.
-#
-#     *worker* - BackgroundTasks для выполнения задач в фоне.
-#
-#     *user_chat_db* - экземпляр CRUDUserChat для работы с таблицей user_chat.
-#     """
-#     worker.add_task(user_chat_db.delete_all, user_id)
+@router.put(RouterPaths.DELETE_WORD_LIST, status_code=status.HTTP_202_ACCEPTED)
+async def delete_word_list_by_key(
+    user_delete_list_word: WordDeleteMany,
+    worker: BackgroundTasks,
+    user_word_db: CRUDUserWord = Depends(get_user_word_db),
+) -> None:
+    """Удаление заданного списка слов из бд по заданной категории.
+
+    **Параметры**
+
+    *user_delete_list_chat* - схема запроса ChatDelete.
+
+    *worker* - BackgroundTasks для выполнения задач в фоне.
+
+    *user_word_db* - экземпляр CRUDUserWord для работы с таблицей user_word.
+    """
+    worker.add_task(user_word_db.delete_word_list_by_key, user_delete_list_word)
+
+
+@router.delete(RouterPaths.DELETE_WORDS_BY_KEY, status_code=status.HTTP_202_ACCEPTED)
+async def delete_all_words_by_key(
+    user_id: int,
+    *,
+    is_key: bool,
+    worker: BackgroundTasks,
+    user_word_db: CRUDUserWord = Depends(get_user_word_db),
+) -> None:
+    """Удаление категории слов пользователя из бд.
+
+    **Параметры**
+
+    *user_id* - id пользователя телеграмм.
+
+    *is_key* - флаг категории слов.
+
+    *worker* - BackgroundTasks для выполнения задач в фоне.
+
+    *user_word_db* - экземпляр CRUDUserWord для работы с таблицей user_word.
+    """
+    worker.add_task(user_word_db.delete_by_key, user_id, is_key=is_key)
