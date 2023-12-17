@@ -75,7 +75,7 @@ class CRUDUserWord(CRUDBase[UserWord, WordCreate, WordUpdate]):
         )
         await async_execute(query)
 
-    async def delete_by_key(self, user_id: int, is_key: bool) -> None:
+    async def delete_by_key(self, user_id: int, *, is_key: bool) -> None:
         """Удаляет все слова из бд по ключу is_key.
 
         **Параметры**

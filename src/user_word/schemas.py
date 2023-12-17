@@ -22,6 +22,8 @@ class WordCreateMany(BaseModel):
 class WordReadMany(WordCreateMany):
     """Схема запроса на получение списка слов."""
 
+    words: list[WordCreate]
+
     model_config = ConfigDict(from_attributes=True)
 
 

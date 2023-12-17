@@ -6,6 +6,5 @@ class RouterPaths(str, Enum):
 
     ADD_WORDS = "/user/words/"
     GET_WORDS = "/user/words/all"
-
-    DELETE_WORDS = "/user/words/"  # noqa:PIE796
-    DELETE_ALL_CHATS = "/user/words/all"  # noqa: PIE796
+    DELETE_WORD_LIST = "/user/words/"  # noqa:PIE796
+    DELETE_WORDS_BY_KEY = "/user/words/all"  # noqa: PIE796
