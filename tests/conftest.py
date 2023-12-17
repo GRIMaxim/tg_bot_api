@@ -8,9 +8,11 @@ from httpx import AsyncClient
 from src.user_chat.crud import CRUDUserChat
 from src.user_data.crud import CRUDUserData
 from src.user_word.crud import CRUDUserWord
+from src.user_search_settings.crud import CRUDUserSearchSettings
 from src.user_data.dependencies import get_user_data_db
 from src.user_chat.dependencies import get_user_chat_db
 from src.user_word.dependencies import get_user_word_db
+from src.user_search_settings.dependencies import get_user_search_settings_db
 
 from src.main import main_app
 
@@ -68,6 +70,12 @@ def user_chat_db() -> CRUDUserChat:
 def user_word_db() -> CRUDUserWord:
     """Фабрика для получения CRUDUserChat."""
     return get_user_word_db()
+
+
+@pytest.fixture()
+def user_user_search_settings_db() -> CRUDUserSearchSettings:
+    """Фабрика для получения CRUDUserSearchSettings."""
+    return get_user_search_settings_db()
 
 
 @pytest_asyncio.fixture()
