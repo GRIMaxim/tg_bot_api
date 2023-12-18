@@ -1,0 +1,20 @@
+name: Run tests
+on:
+  push:
+    branches:
+      - 'dev'
+jobs:
+  run_tests:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@dev
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.11'
+          architecture: 'x64'
+      - name: Install poetry
+        run: python3 pip install poetry
+      - name: Install dependencies
+        run: poetry install
+      - name: Run tests
+        run: pytest
