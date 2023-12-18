@@ -1,6 +1,4 @@
 from sqlalchemy.util import immutabledict
-from pydantic import BaseModel
-
 
 DB_NAMING_CONVENTION = immutabledict(
     {
