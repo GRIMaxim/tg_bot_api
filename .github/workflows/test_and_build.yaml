@@ -20,9 +20,9 @@ jobs:
       - name: Run tests
         run: poetry run pytest
         env:
-          PG_DRIVERNAME: ${{ api_env.PG_DRIVERNAME }}
-          PG_HOST: ${{ api_env.PG_HOST }}
-          PG_PASS: ${{ api_env.PG_PASS }}
-          PG_PORT: ${{ api_env.PG_PORT }}
-          PG_USER: ${{ api_env.PG_USER }}
-          PG_DATABASE: ${{ secrets.PG_DATABASE }}
+          PG_DRIVERNAME: ${{ api_env.secrets.PG_DRIVERNAME }}
+          PG_HOST: ${{ api_env.secrets.PG_HOST }}
+          PG_PASS: ${{ api_env.secrets.PG_PASS }}
+          PG_PORT: ${{ api_env.secrets.PG_PORT }}
+          PG_USER: ${{ api_env.secrets.PG_USER }}
+          PG_DATABASE: ${{ api_env.secrets.PG_DATABASE }}
