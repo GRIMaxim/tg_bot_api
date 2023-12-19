@@ -6,6 +6,7 @@ on:
 jobs:
   run_tests:
     runs-on: [ubuntu-latest]
+    environment: api_env
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-python@v4
@@ -19,10 +20,3 @@ jobs:
         run: poetry install
       - name: Run tests
         run: poetry run pytest
-        env:
-          PG_DRIVERNAME: ${{ api_env.secrets.PG_DRIVERNAME }}
-          PG_HOST: ${{ api_env.secrets.PG_HOST }}
-          PG_PASS: ${{ api_env.secrets.PG_PASS }}
-          PG_PORT: ${{ api_env.secrets.PG_PORT }}
-          PG_USER: ${{ api_env.secrets.PG_USER }}
-          PG_DATABASE: ${{ api_env.secrets.PG_DATABASE }}
