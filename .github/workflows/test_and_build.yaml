@@ -20,3 +20,11 @@ jobs:
         run: poetry install
       - name: Run tests
         run: poetry run pytest
+        env:
+          F_TEST: ${{ env.F_TEST }}
+          PG_DRIVERNAME: ${{ secrets.PG_DRIVERNAME }}
+          PG_HOST: ${{ secrets.PG_HOST }}
+          PG_PASS: ${{ secrets.PG_PASS }}
+          PG_PORT: ${{ secrets.PG_PORT }}
+          PG_USER: ${{ secrets.PG_USER }}
+          PG_DATABASE: ${{ secrets.PG_DATABASE }}
