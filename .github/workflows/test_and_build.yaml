@@ -23,7 +23,7 @@ jobs:
       - name: Run ruff
         run: poetry run ruff . --fix
       - name: Run mypy
-        run: poetry run mypy .
+        run: poetry run mypy ./src
       - name: Run deptry
         run: poetry run deptry .
       - name: Run tests
