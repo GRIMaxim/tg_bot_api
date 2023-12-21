@@ -64,9 +64,9 @@ jobs:
     # needs: [build_and_pub]
     runs-on: [ubuntu-latest]
     environment: deploy_env
-    env:
-      TAG: "${GITHUB_REF:11}"
     steps:
+      - name: Checkout
+        uses: actions/checkout@master
       - name: Connect to server and run deploy
         uses: appleboy/ssh-action@master
         with:
@@ -75,6 +75,5 @@ jobs:
           username: ${{ secrets.USER_SERVER }}
           password: ${{ secrets.PASSWORD_SERVER }}
           script_stop: true
-          envs: TAG
-          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} $GITHUB_REF
+          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} ${GITHUB_REF:11}
         
