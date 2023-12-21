@@ -75,5 +75,6 @@ jobs:
           username: ${{ secrets.USER_SERVER }}
           password: ${{ secrets.PASSWORD_SERVER }}
           script_stop: true
-          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} ${{ env.TAG }}
+          envs: TAG
+          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} $TAG
         
