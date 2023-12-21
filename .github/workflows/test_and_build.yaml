@@ -65,6 +65,11 @@ jobs:
     needs: [build_and_pub]
     runs-on: [ubuntu-latest]
     environment: deploy_env
+    env:
+      LOGIN: ${{ secrets.DOCKER_LOGIN }}
+      PASSWORD: ${{ secrets.DOCKER_PWD }}
+      REPO_NAME: ${{ secrets.DOCKER_NAME }}
+      REPO_TAG: ${GITHUB_REF:11}
     steps:
       - name: Connect to server and run deploy
         uses: appleboy/ssh-action@master
@@ -74,5 +79,5 @@ jobs:
           username: ${{ secrets.USER_SERVER }}
           password: ${{ secrets.PASSWORD_SERVER }}
           script_stop: true
-          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} ${GITHUB_REF:11}
+          script: bash deploy.sh $LOGIN $PASSWORD $REPO_NAME $REPO_TAG
         
