@@ -56,16 +56,16 @@ jobs:
   #       run:  echo ${{ secrets.DOCKER_PWD }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
   #     - uses: actions/checkout@master
   #     - name: Build image
-  #       run: docker build -t $LOGIN/$NAME:${GITHUB_REF_NAME} -f Dockerfile .
+  #       run: docker build -t $LOGIN/$NAME:${GITHUB_REF:11} -f Dockerfile .
   #     - name: Push image to docker.io
-  #       run: docker push $LOGIN/$NAME:${GITHUB_REF_NAME}
+  #       run: docker push $LOGIN/$NAME:${GITHUB_REF:11}
   deploy:
     name: Deploy to server
     # needs: [build_and_pub]
     runs-on: [ubuntu-latest]
     environment: deploy_env
     env:
-      TAG: "$GITHUB_REF_NAME"
+      TAG: "${GITHUB_REF:11}"
     steps:
       - name: Connect to server and run deploy
         uses: appleboy/ssh-action@master
@@ -76,5 +76,5 @@ jobs:
           password: ${{ secrets.PASSWORD_SERVER }}
           script_stop: true
           envs: TAG
-          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} "$GITHUB_REF_NAME"
+          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} $TAG
         
