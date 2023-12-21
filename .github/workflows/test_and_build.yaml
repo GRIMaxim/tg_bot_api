@@ -65,8 +65,6 @@ jobs:
     runs-on: [ubuntu-latest]
     environment: deploy_env
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
       - name: Connect to server and run deploy
         uses: appleboy/ssh-action@master
         with:
@@ -75,5 +73,6 @@ jobs:
           username: ${{ secrets.USER_SERVER }}
           password: ${{ secrets.PASSWORD_SERVER }}
           script_stop: true
+          allenvs: true
           script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} ${GITHUB_REF:11}
         
