@@ -76,5 +76,5 @@ jobs:
           password: ${{ secrets.PASSWORD_SERVER }}
           script_stop: true
           envs: TAG
-          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} $TAG
+          script: bash deploy.sh ${{ secrets.DOCKER_LOGIN }} ${{ secrets.DOCKER_PWD }} ${{ secrets.DOCKER_NAME }} "$GITHUB_REF_NAME"
         
