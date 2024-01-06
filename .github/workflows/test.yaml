@@ -24,15 +24,13 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        ports:
-          - 5433:5432
     environment: dev_env
     env:
       F_TEST: ${{ secrets.F_TEST }}
       PG_DRIVERNAME: postgresql+asyncpg
       PG_HOST: postgres
       PG_PASS: postgres
-      PG_PORT: 5433
+      PG_PORT: 5432
       PG_USER: postgres
       PG_DATABASE: test_db
     steps:
