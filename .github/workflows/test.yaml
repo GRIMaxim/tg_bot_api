@@ -49,7 +49,7 @@ jobs:
         env:
           F_TEST: ${{ secrets.F_TEST }}
           PG_DRIVERNAME: postgresql+asyncpg
-          PG_HOST: postgres
+          PG_HOST: localhost
           PG_PASS: postgres
           PG_PORT: 5466
           PG_USER: postgres
