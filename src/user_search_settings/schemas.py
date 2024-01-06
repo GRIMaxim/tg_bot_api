@@ -1,12 +1,14 @@
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict
 
 
 class SettingsCreate(BaseModel):
     """Промежуточная схема для добавления настроек."""
 
     user_id: int
-    start_date: str
-    end_date: bool
+    start_date: datetime
+    end_date: datetime
 
 
 class SettingsUpdate(SettingsCreate):
