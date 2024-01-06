@@ -37,7 +37,7 @@ jobs:
       PG_USER: postgres
       PG_DATABASE: test_db
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
