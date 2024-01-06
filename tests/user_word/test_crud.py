@@ -40,7 +40,7 @@ class TestCRUDUserWords:
             words.word for words in self.word_data.words[:10] if words.is_key
         ]
         in_data = WordDeleteMany(
-            user_id=self.user["user_id"], words=words_for_delete, is_key=True
+            user_id=self.user["user_id"], words=words_for_delete, is_key=True,
         )
         await user_word_db.delete_word_list_by_key(in_data)
         db_words = await user_word_db.get_words(self.user["user_id"])
@@ -59,7 +59,7 @@ class TestCRUDUserWords:
             words.word for words in self.word_data.words[:10] if not words.is_key
         ]
         in_data = WordDeleteMany(
-            user_id=self.user["user_id"], words=words_for_delete, is_key=False
+            user_id=self.user["user_id"], words=words_for_delete, is_key=False,
         )
         await user_word_db.delete_word_list_by_key(in_data)
         db_words = await user_word_db.get_words(self.user["user_id"])

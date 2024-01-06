@@ -34,14 +34,14 @@ class TestCRUDUserSearchSettings:
         await user_data_db.create(self.test_user)
         await user_search_settings_db.create(self.test_settings)
         settings_db = await user_search_settings_db.get_settings_by_user_id(
-            self.test_user.user_id
+            self.test_user.user_id,
         )
         assert settings_db.user_id == self.test_settings.user_id
         assert settings_db.start_date == self.test_settings.start_date
         assert settings_db.end_date == self.test_settings.end_date
 
     async def test_update_settings(
-        self, user_search_settings_db: CRUDUserSearchSettings
+        self, user_search_settings_db: CRUDUserSearchSettings,
     ) -> None:
         """Тестирование CRUDBase.create и CRUDUserSearchSettings.get_settings_by_user_id."""
         updated_settings = SettingsUpdate(
@@ -51,7 +51,7 @@ class TestCRUDUserSearchSettings:
         )
         await user_search_settings_db.update_settings(updated_settings)
         settings_db = await user_search_settings_db.get_settings_by_user_id(
-            self.test_user.user_id
+            self.test_user.user_id,
         )
         assert settings_db.user_id == updated_settings.user_id
         assert settings_db.start_date == updated_settings.start_date

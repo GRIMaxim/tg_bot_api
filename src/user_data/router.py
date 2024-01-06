@@ -84,7 +84,6 @@ async def get_all_user_data(
 
     *user_data_db* - экземпляр CRUDUserData для работы с базой данных.
     """
-    # TODO @me: Написать тест
     user_out: UserData | None = None
     if user_id:
         user_out = await user_data_db.get_by_user_id_with_fk(user_id)

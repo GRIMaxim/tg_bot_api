@@ -34,7 +34,7 @@ class TestUserSearchSettingsRouter:
         await user_data_db.create(self.test_user)
         await user_search_settings_db.create(self.test_settings)
         response = await client.get(
-            RouterPaths.GET_SETTINGS, params={"user_id": self.test_settings["user_id"]}
+            RouterPaths.GET_SETTINGS, params={"user_id": self.test_settings["user_id"]},
         )
         assert response.status_code == status.HTTP_200_OK
         settings = response.json()
@@ -46,14 +46,14 @@ class TestUserSearchSettingsRouter:
         """Тестирование обновления настроек пользователя для мгновенного поиска."""
         updated_settings = self.test_settings.copy()
         updated_settings["start_date"] = (updated_settings["start_date"] + timedelta(
-            days=1
+            days=1,
         )).isoformat()
         updated_settings["end_date"] = (updated_settings["end_date"] + timedelta(days=1)).isoformat()
         response = await client.put(RouterPaths.UPDATE_SETTINGS, json=updated_settings)
         assert response.status_code == status.HTTP_202_ACCEPTED
 
         response = await client.get(
-            RouterPaths.GET_SETTINGS, params={"user_id": self.test_settings["user_id"]}
+            RouterPaths.GET_SETTINGS, params={"user_id": self.test_settings["user_id"]},
         )
         assert response.status_code == status.HTTP_200_OK
         settings = response.json()

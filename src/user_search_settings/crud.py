@@ -26,7 +26,8 @@ class CRUDUserSearchSettings(CRUDBase[UserSearchSettings, SettingsCreate, Settin
         """
         query = select(self.model).where(self.model.user_id == user_id)
         result = await async_execute(query)
-        return result.scalar()
+        settings: UserSearchSettings = result.scalar_one()
+        return settings
 
     async def update_settings(self, settings: SettingsUpdate | Mapping[str, Any]) -> None:
         """Обновляет настройки пользователя."""
