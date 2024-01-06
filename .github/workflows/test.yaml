@@ -24,6 +24,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5466:5432
     environment: dev_env
     steps:
       - uses: actions/checkout@master
@@ -49,6 +51,6 @@ jobs:
           PG_DRIVERNAME: postgresql+asyncpg
           PG_HOST: postgres
           PG_PASS: postgres
-          PG_PORT: 5432
+          PG_PORT: 5466
           PG_USER: postgres
           PG_DATABASE: test_db
