@@ -25,14 +25,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     environment: dev_env
-    env:
-      F_TEST: ${{ secrets.F_TEST }}
-      PG_DRIVERNAME: postgresql+asyncpg
-      PG_HOST: postgres
-      PG_PASS: postgres
-      PG_PORT: 5432
-      PG_USER: postgres
-      PG_DATABASE: test_db
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-python@v4
@@ -52,3 +44,11 @@ jobs:
         run: poetry run deptry .
       - name: Run tests
         run: poetry run pytest
+        env:
+          F_TEST: ${{ secrets.F_TEST }}
+          PG_DRIVERNAME: postgresql+asyncpg
+          PG_HOST: postgres
+          PG_PASS: postgres
+          PG_PORT: 5432
+          PG_USER: postgres
+          PG_DATABASE: test_db
