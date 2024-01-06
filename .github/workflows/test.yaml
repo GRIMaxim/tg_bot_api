@@ -12,7 +12,6 @@ jobs:
   run_tests_and_linters:
     name: Run tests and linters
     runs-on: ubuntu-latest
-    container: node:10.18-jessie
     services:
       postgres:
         image: postgres
@@ -37,7 +36,7 @@ jobs:
       PG_USER: postgres
       PG_DATABASE: test_db
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@master
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
