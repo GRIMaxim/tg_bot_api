@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "tg-bot-api"
 version = "0.1.0"
-description = ""
+description = "API for telegramm bot"
 authors = ["Grigoruk <grimax14@gmail.com>"]
 readme = "README.md"
 

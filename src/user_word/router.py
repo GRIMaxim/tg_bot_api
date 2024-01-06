@@ -29,7 +29,7 @@ async def add_list_word(
 
 
 @router.get(
-    RouterPaths.GET_WORDS, status_code=status.HTTP_200_OK, response_model=WordReadMany
+    RouterPaths.GET_WORDS, status_code=status.HTTP_200_OK, response_model=WordReadMany,
 )
 async def get_list_word(
     user_id: int,
