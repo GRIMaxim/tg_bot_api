@@ -73,7 +73,7 @@ def user_word_db() -> CRUDUserWord:
 
 
 @pytest.fixture()
-def user_user_search_settings_db() -> CRUDUserSearchSettings:
+def user_search_settings_db() -> CRUDUserSearchSettings:
     """Фабрика для получения CRUDUserSearchSettings."""
     return get_user_search_settings_db()
 
