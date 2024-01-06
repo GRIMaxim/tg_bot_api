@@ -9,8 +9,7 @@ on:
       - 'master'
       - 'dev'
 jobs:
-  run_tests_and_linters:
-    name: Run tests and linters
+  create_postgres_db:
     runs-on: ubuntu-latest
     container: node:10.18-jessie
     services:
@@ -27,6 +26,9 @@ jobs:
           --health-retries 5
         ports:
           - 5433:5432
+  run_tests_and_linters:
+    name: Run tests and linters
+    runs-on: ubuntu-latest
     environment: dev_env
     env:
       F_TEST: ${{ secrets.F_TEST }}
