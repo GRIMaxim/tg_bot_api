@@ -1,0 +1,56 @@
+name: Lint&Test
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+  pull_request:
+    branches:
+      - 'master'
+      - 'dev'
+jobs:
+  run_tests_and_linters:
+    name: Run tests and linters
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5466:5432
+    environment: dev_env
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.6.1'
+      - name: Install dependencies
+        run: poetry install
+      - name: Run ruff
+        run: poetry run ruff . --fix
+      - name: Run mypy
+        run: poetry run mypy ./src
+      - name: Run deptry
+        run: poetry run deptry .
+      - name: Run tests
+        run: poetry run pytest
+        env:
+          F_TEST: ${{ secrets.F_TEST }}
+          PG_DRIVERNAME: postgresql+asyncpg
+          PG_HOST: localhost
+          PG_PASS: postgres
+          PG_PORT: 5466
+          PG_USER: postgres
+          PG_DATABASE: test_db
