@@ -7,8 +7,8 @@ class SettingsCreate(BaseModel):
     """Промежуточная схема для добавления настроек."""
 
     user_id: int
-    start_date: datetime
-    end_date: datetime
+    start_date: datetime | None
+    end_date: datetime | None
 
 
 class SettingsUpdate(SettingsCreate):
