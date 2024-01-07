@@ -14,8 +14,16 @@ class SubscriptionCreate(BaseModel):
 class SubscriptionUpdate(SubscriptionCreate):
     """Схема запроса для обновления подписки и ее настроек."""
 
+    pk: int
+
 
 class SubscriptionRead(SubscriptionCreate):
     """Схема для получения подписки и ее настроек."""
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class SubscriptionReadMany(BaseModel):
+    """Схема для получения списка подписок."""
+
+    subscription_list: list[SubscriptionRead]
