@@ -13,6 +13,8 @@ from src.user_data.dependencies import get_user_data_db
 from src.user_chat.dependencies import get_user_chat_db
 from src.user_word.dependencies import get_user_word_db
 from src.user_search_settings.dependencies import get_user_search_settings_db
+from src.subscription.dependencies import get_subscription_db
+from src.subscription.crud import CRUDSubscription
 
 from src.main import main_app
 
@@ -76,6 +78,12 @@ def user_word_db() -> CRUDUserWord:
 def user_search_settings_db() -> CRUDUserSearchSettings:
     """Фабрика для получения CRUDUserSearchSettings."""
     return get_user_search_settings_db()
+
+
+@pytest.fixture()
+def subscription_db() -> CRUDSubscription:
+    """Фабрика для получения CRUDSubscription."""
+    return get_subscription_db()
 
 
 @pytest_asyncio.fixture()
