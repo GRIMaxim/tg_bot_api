@@ -1,15 +1,10 @@
 import asyncio
 from logging.config import fileConfig
-import os
 
 from alembic import context
 from sqlalchemy import Connection, engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from src.config import Base, db_url
-from src.user_data.database import UserData
-from src.user_chat.database import UserChat
-if os.getenv("F_TEST") == "True":
-    from tests.base.test_crud_base import DBTestModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
